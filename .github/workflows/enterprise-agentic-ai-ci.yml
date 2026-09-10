@@ -1,0 +1,27 @@
+name: Enterprise Agentic AI CI
+
+on:
+  push:
+    paths:
+      - "enterprise-agentic-ai-platform/**"
+      - ".github/workflows/enterprise-agentic-ai-ci.yml"
+  pull_request:
+    paths:
+      - "enterprise-agentic-ai-platform/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: enterprise-agentic-ai-platform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: enterprise-agentic-ai-platform/pyproject.toml
+      - run: pip install -e ".[dev]"
+      - run: ruff check app tests
+      - run: pytest -q --cov=app --cov-report=term-missing
